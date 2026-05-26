@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
@@ -8,6 +8,7 @@ type LoginMode = 'participant' | 'organizer'
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { login } = useAuth()
   const toast = useToast()
   const [mode, setMode] = useState<LoginMode>('participant')
@@ -15,6 +16,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const redirectTo = searchParams.get('redirect') || '/minha-conta'
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,7 +26,7 @@ export function LoginPage() {
     try {
       await login({ mode, identifier: identifier.trim(), password })
       toast.success('Login realizado com sucesso.')
-      navigate('/minha-conta')
+      navigate(redirectTo)
     } catch (err) {
       const message = (err as Error).message
       setError(message)

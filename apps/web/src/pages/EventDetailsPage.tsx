@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
+import { useAuth } from '../contexts/AuthContext'
 import { api } from '../lib/api'
 import { categoryLabel, formatCurrency, formatDate } from '../lib/format'
 import { parseStravaEmbedSnippet, parseStravaRouteUrl, type StravaEmbedConfig } from '../lib/strava'
@@ -118,6 +119,7 @@ function getEventStatusCopy(status: EventItem['status']) {
 
 export function EventDetailsPage() {
   const { slug = '' } = useParams()
+  const { token } = useAuth()
   const [event, setEvent] = useState<EventItem | null>(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -214,7 +216,12 @@ export function EventDetailsPage() {
               <p>{formatDate(registrationDeadline)}</p>
             </div>
             {currentEvent.status === 'published' ? (
-              <Link className="primary-button event-detail-sidebar__cta" to={`/checkout/${currentEvent.slug}`}>Inscreva-se</Link>
+              <Link
+                className="primary-button event-detail-sidebar__cta"
+                to={token ? `/checkout/${currentEvent.slug}` : `/login?redirect=${encodeURIComponent(`/checkout/${currentEvent.slug}`)}`}
+              >
+                Inscreva-se
+              </Link>
             ) : (
               <div className="event-detail-sidebar__status">
                 <span className={`status-badge status-${currentEvent.status}`}>{eventStatusCopy.title}</span>

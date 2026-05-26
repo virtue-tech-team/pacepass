@@ -160,6 +160,29 @@ function buildInitialParticipant(user: ReturnType<typeof useAuth>['user']): Part
   }
 }
 
+function buildEmptyParticipant(): ParticipantFormState {
+  return {
+    fullName: '',
+    birthDate: '',
+    gender: '',
+    documentType: 'CPF',
+    document: '',
+    email: '',
+    phone: '',
+    zipCode: '',
+    country: 'Brasil',
+    state: '',
+    city: '',
+    addressLine: '',
+    addressNumber: '',
+    emergencyContact: '',
+    profession: '',
+    team: '',
+    company: '',
+    privacyAccepted: false,
+  }
+}
+
 function formatZipCode(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 8)
   return digits.length <= 5 ? digits : `${digits.slice(0, 5)}-${digits.slice(5)}`
@@ -325,6 +348,15 @@ export function EventCheckoutPage() {
   const feeAmount = calculatePlatformFee(subtotal, organizerFeePercent)
   const totalAmount = subtotal + feeAmount
   const currentVisualStep = stage === 'confirmacao' ? 'pagamento' : stage
+
+  function handleBuyerTypeChange(nextBuyerType: BuyerType) {
+    setBuyerType(nextBuyerType)
+    setZipLookupError('')
+
+    if (nextBuyerType === 'third_party') {
+      setParticipant(buildEmptyParticipant())
+    }
+  }
 
   function openGroup(groupId: string) {
     setSelectedGroupId(groupId)
@@ -764,11 +796,11 @@ export function EventCheckoutPage() {
               </div>
 
               <div className="checkout-choice-grid">
-                <button type="button" className={`checkout-choice-card${buyerType === 'self' ? ' checkout-choice-card--active' : ''}`} onClick={() => setBuyerType('self')}>
+                <button type="button" className={`checkout-choice-card${buyerType === 'self' ? ' checkout-choice-card--active' : ''}`} onClick={() => handleBuyerTypeChange('self')}>
                   <strong>Essa inscrição é para mim</strong>
                   <span>{user ? `${user.name} • ${user.email}` : 'Faça login para usar seus dados automaticamente.'}</span>
                 </button>
-                <button type="button" className={`checkout-choice-card${buyerType === 'third_party' ? ' checkout-choice-card--active' : ''}`} onClick={() => setBuyerType('third_party')}>
+                <button type="button" className={`checkout-choice-card${buyerType === 'third_party' ? ' checkout-choice-card--active' : ''}`} onClick={() => handleBuyerTypeChange('third_party')}>
                   <strong>Inscrição para terceiros</strong>
                   <span>Você informa os dados do participante no próximo passo.</span>
                 </button>
