@@ -313,6 +313,10 @@ export function EventCheckoutPage() {
     }
   }, [buyerType, user])
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [stage])
+
   const ticketGroups = useMemo(() => {
     if (!event) {
       return [] as Array<{ groupId: string; groupName: string; tickets: TicketType[] }>

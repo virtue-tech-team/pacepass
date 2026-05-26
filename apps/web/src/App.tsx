@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 
 import { AuthenticatedLayout } from './components/AuthenticatedLayout'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -31,11 +32,22 @@ import { UserDashboardPage } from './pages/UserDashboardPage'
 import { VerifyEmailPage } from './pages/VerifyEmailPage'
 import { VerificationPendingPage } from './pages/VerificationPendingPage'
 
+function ScrollToTop() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname, location.search])
+
+  return null
+}
+
 function App() {
   return (
     <AuthProvider>
       <ToastProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route element={<Shell />}>
               <Route index element={<HomePage />} />
