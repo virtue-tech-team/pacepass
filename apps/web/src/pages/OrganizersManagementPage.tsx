@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { api } from '../lib/api'
+import { formatDateForApi, formatDateInput, getDateInputError } from '../lib/date-input'
 import type { CreateEventAdminInput, User } from '../types'
 
 const initialOrganizerForm: CreateEventAdminInput = {
@@ -94,12 +95,24 @@ export function OrganizersManagementPage() {
 
     if (!token) return
 
+    const birthDateError = getDateInputError(organizerForm.birthDate)
+
+    if (birthDateError) {
+      setError(birthDateError)
+      setSuccess('')
+      toast.error(birthDateError)
+      return
+    }
+
     setIsCreatingOrganizer(true)
     setError('')
     setSuccess('')
 
     try {
-      const response = await api.createEventAdmin(token, organizerForm)
+      const response = await api.createEventAdmin(token, {
+        ...organizerForm,
+        birthDate: formatDateForApi(organizerForm.birthDate),
+      })
 
       setAdmins((current) => [response.user, ...current])
       setDraftFees((current) => ({
@@ -169,7 +182,14 @@ export function OrganizersManagementPage() {
             </label>
             <label>
               <span>Data de nascimento</span>
-              <input type="date" value={organizerForm.birthDate} onChange={(event) => setOrganizerForm((current) => ({ ...current, birthDate: event.target.value }))} />
+              <input
+                type="text"
+                inputMode="numeric"
+                value={organizerForm.birthDate}
+                onChange={(event) => setOrganizerForm((current) => ({ ...current, birthDate: formatDateInput(event.target.value) }))}
+                placeholder="dd/mm/aaaa"
+                maxLength={10}
+              />
             </label>
             <label>
               <span>Gênero</span>

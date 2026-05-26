@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
+import { formatDateForApi, formatDateForDisplay, formatDateInput, getDateInputError, normalizeDateInputValue } from '../lib/date-input'
 
 interface ProfileFormState {
   name: string
@@ -54,7 +55,7 @@ export function UserDashboardPage() {
       name: user?.name || '',
       email: user?.email || '',
       phone: user?.phone || '',
-      birthDate: user?.birthDate || '',
+      birthDate: normalizeDateInputValue(user?.birthDate || ''),
       gender: user?.gender || '',
       documentType: user?.documentType || 'CPF',
       document: user?.document || '',
@@ -154,6 +155,15 @@ export function UserDashboardPage() {
       return
     }
 
+    const birthDateError = getDateInputError(values.birthDate)
+
+    if (birthDateError) {
+      setError(birthDateError)
+      setSuccessMessage('')
+      toast.error(birthDateError)
+      return
+    }
+
     setIsSubmitting(true)
     setError('')
     setSuccessMessage('')
@@ -163,7 +173,7 @@ export function UserDashboardPage() {
         name: values.name.trim(),
         email: values.email.trim(),
         phone: values.phone.trim(),
-        birthDate: values.birthDate,
+        birthDate: formatDateForApi(values.birthDate),
         gender: values.gender,
         documentType: values.documentType,
         document: values.document.trim(),
@@ -215,7 +225,7 @@ export function UserDashboardPage() {
             </div>
             <div className="account-profile-card__fact">
               <span>Data de nascimento</span>
-              <strong>{user?.birthDate ? new Date(user.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}</strong>
+              <strong>{user?.birthDate ? formatDateForDisplay(user.birthDate) : 'Não informado'}</strong>
             </div>
             <div className="account-profile-card__fact">
               <span>Gênero</span>
@@ -257,7 +267,14 @@ export function UserDashboardPage() {
               </label>
               <label>
                 <span>Data de nascimento</span>
-                <input type="date" value={values.birthDate} onChange={(event) => setValues((current) => ({ ...current, birthDate: event.target.value }))} />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={values.birthDate}
+                  onChange={(event) => setValues((current) => ({ ...current, birthDate: formatDateInput(event.target.value) }))}
+                  placeholder="dd/mm/aaaa"
+                  maxLength={10}
+                />
               </label>
               <label>
                 <span>Gênero</span>

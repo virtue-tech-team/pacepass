@@ -5,6 +5,7 @@ import { StripeEmbeddedPaymentForm } from '../components/StripeEmbeddedPaymentFo
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { api } from '../lib/api'
+import { formatDateForApi, formatDateInput, getDateInputError, normalizeDateInputValue } from '../lib/date-input'
 import { formatCurrency, formatDate } from '../lib/format'
 import type { EventAdditionalQuestion, EventBatch, EventItem, RegistrationItem, TicketType } from '../types'
 
@@ -140,7 +141,7 @@ function calculatePlatformFee(subtotal: number, platformFeePercent: number) {
 function buildInitialParticipant(user: ReturnType<typeof useAuth>['user']): ParticipantFormState {
   return {
     fullName: user?.name || '',
-    birthDate: user?.birthDate || '',
+    birthDate: normalizeDateInputValue(user?.birthDate || ''),
     gender: user?.gender || '',
     documentType: user?.documentType || 'CPF',
     document: user?.document || '',
@@ -464,6 +465,13 @@ export function EventCheckoutPage() {
       return
     }
 
+    const birthDateError = getDateInputError(participant.birthDate)
+
+    if (birthDateError) {
+      toast.error(birthDateError)
+      return
+    }
+
     if (!participant.privacyAccepted) {
       toast.error('Aceite a política de privacidade e as determinações da LGPD para continuar.')
       return
@@ -505,7 +513,10 @@ export function EventCheckoutPage() {
       batchId: selectedBatch._id,
       buyerType,
       paymentMethodPreference: mapPaymentOptionToPreference(selectedPaymentOption),
-      participant,
+      participant: {
+        ...participant,
+        birthDate: formatDateForApi(participant.birthDate),
+      },
       additionalAnswers: selectedTicket.additionalQuestions
         .map((question) => ({
           questionId: question._id || question.label,
@@ -895,7 +906,14 @@ export function EventCheckoutPage() {
                   </label>
                   <label>
                     <span>Data de nascimento</span>
-                    <input type="date" value={participant.birthDate} onChange={(event) => setParticipant((current) => ({ ...current, birthDate: event.target.value }))} />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={participant.birthDate}
+                      onChange={(event) => setParticipant((current) => ({ ...current, birthDate: formatDateInput(event.target.value) }))}
+                      placeholder="dd/mm/aaaa"
+                      maxLength={10}
+                    />
                   </label>
                   <label>
                     <span>Gênero</span>
