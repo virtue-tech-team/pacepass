@@ -40,7 +40,7 @@ function App() {
             <Route element={<Shell />}>
               <Route index element={<HomePage />} />
               <Route path="/e/:slug" element={<EventDetailsPage />} />
-              <Route path="/checkout/:slug" element={<EventCheckoutPage />} />
+              <Route path="/checkout/:slug" element={<ProtectedRoute><EventCheckoutPage /></ProtectedRoute>} />
               <Route path="/eventos" element={<EventsPage />} />
               <Route path="/eventos/:slug" element={<EventDetailsPage />} />
               <Route path="/calendario" element={<CalendarPage />} />
