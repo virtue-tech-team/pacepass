@@ -91,7 +91,14 @@ p {
 
 .brand-mark {
   width: auto;
-  height: 78px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.brand-mark-footer {
+  width: auto;
+  height: 32px;
   flex-shrink: 0;
   object-fit: contain;
 }
