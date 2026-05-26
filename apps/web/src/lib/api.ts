@@ -20,6 +20,7 @@ import type {
 } from '../types'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+export const AUTH_SESSION_EXPIRED_EVENT = 'auth:session-expired'
 
 export class ApiError extends Error {
   status: number
@@ -46,6 +47,10 @@ async function apiRequest<T>(path: string, options: RequestInit = {}, token?: st
   const data = await response.json().catch(() => ({}))
 
   if (!response.ok) {
+    if (response.status === 401 && token && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(AUTH_SESSION_EXPIRED_EVENT))
+    }
+
     throw new ApiError(data.message || 'Falha ao comunicar com a API.', response.status, data.code)
   }
 
@@ -61,6 +66,11 @@ async function downloadFile(path: string, token: string) {
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))
+
+    if (response.status === 401 && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(AUTH_SESSION_EXPIRED_EVENT))
+    }
+
     throw new ApiError(data.message || 'Falha ao comunicar com a API.', response.status, data.code)
   }
 

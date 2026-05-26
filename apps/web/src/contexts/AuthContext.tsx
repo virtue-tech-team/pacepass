@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import { api } from '../lib/api'
+import { AUTH_SESSION_EXPIRED_EVENT, api } from '../lib/api'
 import type { UpdateMyProfileInput, User } from '../types'
 
 interface AuthContextValue {
@@ -31,6 +31,12 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 const STORAGE_KEY = 'ticketflow-auth'
+
+function redirectToHome() {
+  if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+    window.location.assign('/')
+  }
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -56,10 +62,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(STORAGE_KEY)
         setToken(null)
         setUser(null)
+        redirectToHome()
       })
       .finally(() => {
         setIsLoading(false)
       })
+  }, [])
+
+  useEffect(() => {
+    function handleSessionExpired() {
+      localStorage.removeItem(STORAGE_KEY)
+      setToken(null)
+      setUser(null)
+      redirectToHome()
+    }
+
+    window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired)
+
+    return () => {
+      window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired)
+    }
   }, [])
 
   const value = useMemo<AuthContextValue>(
@@ -97,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(STORAGE_KEY)
         setToken(null)
         setUser(null)
+        redirectToHome()
       },
     }),
     [isLoading, token, user],
