@@ -1,0 +1,21 @@
+
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="120" fill="#050505"/>
+
+  <!-- Speed lines -->
+  <rect x="70" y="210" width="140" height="18" rx="9" fill="#2563EB"/>
+  <rect x="50" y="250" width="180" height="18" rx="9" fill="#2563EB"/>
+  <rect x="90" y="290" width="120" height="18" rx="9" fill="#2563EB"/>
+
+  <!-- Main P shape -->
+  <path
+    d="M250 90H340C415 90 470 145 470 220C470 295 415 350 340 350H260L200 430H120L210 310H340C375 310 400 285 400 250C400 215 375 190 340 190H250V90Z"
+    fill="#2563EB"
+  />
+
+  <!-- White lower leg -->
+  <path
+    d="M185 320L270 320L190 430H105L185 320Z"
+    fill="#D1D5DB"
+  />
+</svg>

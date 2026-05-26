@@ -1,0 +1,23 @@
+{
+  "name": "venda-ingressos-corrida",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:api dev:web",
+    "stripe-listen": "stripe listen --forward-to localhost:4000/api/payments/webhook",
+    "dev:api": "npm run dev --workspace api",
+    "dev:web": "npm run dev --workspace web",
+    "build": "npm run build --workspace api && npm run build --workspace web",
+    "typecheck": "npm run typecheck --workspace web"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "Plataforma de venda de ingressos para eventos esportivos",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
