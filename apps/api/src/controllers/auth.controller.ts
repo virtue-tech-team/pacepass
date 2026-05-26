@@ -235,8 +235,8 @@ export async function forgotPassword(req: Request, res: Response, next: NextFunc
 
     res.json({
       message: payload.mode === 'participant'
-        ? 'Se existir uma conta para este e-mail, enviamos as instrucoes para redefinir a senha.'
-        : 'Se existir uma conta para este username e ela tiver um e-mail cadastrado, enviamos as instrucoes para redefinir a senha.',
+        ? 'Se existir uma conta para este e-mail, enviamos as instruções para redefinir a senha.'
+        : 'Se existir uma conta para este username e ela tiver um e-mail cadastrado, enviamos as instruções para redefinir a senha.',
     })
   } catch (error) {
     next(error)
