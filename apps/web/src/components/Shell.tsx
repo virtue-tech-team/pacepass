@@ -146,6 +146,7 @@ export function Shell() {
             <Link to="/" className="site-footer__logo" aria-label="PacePass">
               <img className="brand-mark" src="/pacepass-logo.png" alt="PacePass" />
             </Link>
+            <p>PacePass conecta inscrições, pagamentos e operação para eventos esportivos.</p>
             <div className="site-footer__socials" aria-label="Redes sociais PacePass">
               <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram PacePass">
                 <svg viewBox="0 0 24 24" aria-hidden="true">

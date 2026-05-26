@@ -117,7 +117,7 @@ const createEmptyValues = (): EventFormValues => ({
     awards: '',
     schedule: '',
     regulation: '',
-    stravaRoutes: [emptyStravaRoute('Percurso 1')],
+    stravaRoutes: [],
     stravaEmbedUrl: '',
   },
   operationalDetails: {
@@ -202,7 +202,7 @@ export function EventForm({
             url: route.url || '',
             embedCode: route.embedCode || '',
           }))
-          : [emptyStravaRoute('Percurso 1')],
+          : [],
       },
     })
     setCurrentStep(0)
@@ -851,7 +851,6 @@ export function EventForm({
                         stravaRoutes: current.pageSections.stravaRoutes.filter((_, currentRouteIndex) => currentRouteIndex !== routeIndex),
                       },
                     }))}
-                    disabled={values.pageSections.stravaRoutes.length === 1}
                   >
                     Remover percurso
                   </button>
